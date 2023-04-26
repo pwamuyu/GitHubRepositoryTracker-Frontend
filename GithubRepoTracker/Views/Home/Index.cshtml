@@ -1,0 +1,156 @@
+﻿@model GithubRepoTracker.ViewModels.RepoListViewModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+
+<div >
+    <h1 class=" text-center display-4">Github Repo Tracker</h1>
+    <div class="row form-group">
+        <div class="col-md-8"></div>
+        <div class="col-md-2">
+            
+            @Html.DropDownListFor(M => M.SelectedTopic, new SelectList(Model.Topics,"topicName","topicName"),"Topics", new { @onchange="callRepoByTopicfunc(this.value)", @class = "dropdown"})
+                         
+        </div>
+        
+        <div class="col-md-2">
+            
+            @Html.DropDownListFor(M => M.SelectedLanguage, new SelectList(Model.Languages,"languageName","languageName"),"Languages", new { @onchange="callRepoByLanguagefunc(this.value)" , @class = "dropdown"})
+  
+        </div>
+    </div>
+    <table class="table table-bordered">
+        <tr>
+            <th scope="col" class="col-2">Name</th>
+            <th scope="col" class="col-3">Description</th>
+            <th scope="col" class="col-1">Language</th>
+            <th scope="col" class="col=3">Topics</th>
+            <th scope="col" class="col-1">
+                @Html.ActionLink("Updated at:", "Index", new {SortParam = "date",SortOrderDate = Model.SortOrderDate, SelectedLanguage=Model.SelectedLanguage,SelectedTopic=Model.SelectedTopic,Page = Model.Pager.CurrentPage})
+            </th>
+            <th scope="col" class="col-1">
+                @Html.ActionLink("Forks", "Index", new {SortParam = "forks",SortOrderFork = Model.SortOrderFork, SelectedLanguage=Model.SelectedLanguage,SelectedTopic=Model.SelectedTopic,Page = Model.Pager.CurrentPage})
+            </th>
+            <th scope="col" class="col-1">
+                @Html.ActionLink("Stars","Index", new {SortParam = "stars",SortOrderStar = Model.SortOrderStar, SelectedLanguage=Model.SelectedLanguage, SelectedTopic=Model.SelectedTopic,Page = Model.Pager.CurrentPage})
+            </th>
+            
+        </tr>
+        @foreach (var repo in Model.Repos) {
+                <tr>
+                    <td><a target="_blank" href=@repo.url>@repo.repositoryName.ToUpper()</a></td>
+                    <td>@repo.description</td>
+                    <td>@repo.language.languageName</td>
+                    <td><ul>
+                        @if (repo.repositoryTopics != null)
+                        {
+                            @foreach (var topic in repo.repositoryTopics)
+                            {
+                                <li>@topic.topicName</li>
+                            }
+                        }
+                        
+                    </ul>
+                </td>
+                    <td>@repo.updatedAt</td>
+                    <td>@repo.forksCount</td>
+                    <td>@repo.stargazersCount</td>
+
+                  
+                </tr>
+        }
+
+    </table>
+
+    <!-- pager -->
+				@if (Model.Pager.EndPage > 1)
+				{
+					<ul class="pagination">
+						@if (Model.Pager.CurrentPage > 1)
+						{
+                            <li>
+                                @if(Model.SortParam=="stars"){
+
+                        @Html.ActionLink("First","Index",new{SortParam= Model.SortParam,SortOrderStar = Model.SortOrder, SelectedLanguage=Model.SelectedLanguage,SelectedTopic=Model.SelectedTopic,Page = 1})
+                        
+                                }else if (Model.SortParam == "forks")
+                                {
+                        @Html.ActionLink("First","Index",new{SortParam= Model.SortParam,SortOrderFork = Model.SortOrder, SelectedLanguage=Model.SelectedLanguage,SelectedTopic=Model.SelectedTopic,Page = 1})
+                                }
+                                else
+                                {
+                        @Html.ActionLink("First","Index",new{SortParam= Model.SortParam, SortOrderDate = Model.SortOrder, SelectedLanguage=Model.SelectedLanguage,SelectedTopic=Model.SelectedTopic,Page = 1})
+                                }
+
+   
+				            </li>
+							<li>
+                    @if (Model.SortParam == "stars")
+                    {
+                        @Html.ActionLink("Prev","Index",new{ SortParam= Model.SortParam, SortOrderStar = Model.SortOrder, SelectedLanguage=Model.SelectedLanguage,SelectedTopic=Model.SelectedTopic,Page = Model.Pager.CurrentPage - 1})
+
+                    }
+                    else if (Model.SortParam == "forks")
+                    {
+                        @Html.ActionLink("Prev","Index",new{ SortParam= Model.SortParam, SortOrderFork = Model.SortOrder, SelectedLanguage=Model.SelectedLanguage,SelectedTopic=Model.SelectedTopic,Page = Model.Pager.CurrentPage - 1})
+                        
+                    }
+                    else
+                    {
+                        @Html.ActionLink("Prev","Index",new{ SortParam= Model.SortParam, SortOrderDate = Model.SortOrder, SelectedLanguage=Model.SelectedLanguage,SelectedTopic=Model.SelectedTopic,Page = Model.Pager.CurrentPage - 1})
+                    }
+                    
+							</li>
+						}
+
+						@for (var pageNo = Model.Pager.StartPage; pageNo <= Model.Pager.EndPage; pageNo++)
+						{
+							<li class="@(pageNo == Model.Pager.CurrentPage ? "active" : "")">
+                    @if (Model.SortParam == "stars")
+                    {
+                        @Html.ActionLink(pageNo.ToString(),"Index",new{ SortParam= Model.SortParam, SortOrderStar = Model.SortOrder, SelectedLanguage=Model.SelectedLanguage,SelectedTopic=Model.SelectedTopic,Page = pageNo})
+
+                    }
+                    else if (Model.SortParam == "forks")
+                    {
+                        @Html.ActionLink(pageNo.ToString(),"Index",new{ SortParam= Model.SortParam, SortOrderFork = Model.SortOrder, SelectedLanguage=Model.SelectedLanguage,SelectedTopic=Model.SelectedTopic,Page = pageNo})
+                    }
+                    else
+                    {
+                        @Html.ActionLink(pageNo.ToString(),"Index",new{ SortParam= Model.SortParam, SortOrderDate = Model.SortOrder, SelectedLanguage=Model.SelectedLanguage,SelectedTopic=Model.SelectedTopic,Page = pageNo})
+                    }
+                    
+                    
+                    
+							</li>
+						}
+
+						@if (Model.Pager.CurrentPage < Model.Pager.TotalPages)
+						{
+							<li>
+                    @if (Model.SortParam == "stars")
+                    {
+                        @Html.ActionLink("Next","Index",new{ SortParam= Model.SortParam, SortOrderStar = Model.SortOrder, SelectedLanguage=Model.SelectedLanguage,SelectedTopic=Model.SelectedTopic,Page = Model.Pager.CurrentPage + 1})
+
+                    }
+                    else if (Model.SortParam == "forks")
+                    {
+                        @Html.ActionLink("Next","Index",new{ SortParam= Model.SortParam, SortOrderFork = Model.SortOrder, SelectedLanguage=Model.SelectedLanguage,SelectedTopic=Model.SelectedTopic,Page = Model.Pager.CurrentPage + 1})
+                    }
+                    else
+                    {
+                        @Html.ActionLink("Next","Index",new{ SortParam= Model.SortParam, SortOrderDate = Model.SortOrder, SelectedLanguage=Model.SelectedLanguage,SelectedTopic=Model.SelectedTopic,Page = Model.Pager.CurrentPage + 1})
+                    }
+
+                    
+								
+							</li>
+						}
+					</ul>
+				}
+
+</div>
+
+<script src="~/js/site.js"></script>
+<script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-1.9.0.min.js"></script>
