@@ -14,7 +14,7 @@ namespace GithubRepoTracker.Controllers
         private readonly RepoInterface _repoInterface;
         private LanguageInterface _languageInterface;
         
-
+       
         public HomeController( RepoInterface repoInterface, TopicInterface topicInterface,LanguageInterface languageInterface)
         {
             _repoInterface = repoInterface;
@@ -26,30 +26,41 @@ namespace GithubRepoTracker.Controllers
 
         // Get: repos action 
        
-        public IActionResult Index(RepoListViewModel repolistViewModel,string? topic,string language,int? page)
+        public async Task<IActionResult> Index(RepoListViewModel repolistViewModel,string? topic,string language,int? page)
         {
             List<Repo> repos = new List<Repo>();
+
+            //If the repos have been filtered by topic happens in case of changing page or sorting
             if (repolistViewModel.SelectedTopic != null) topic = repolistViewModel.SelectedTopic;
+
+            //If the repos have been filtered by language happens in case of changing page or sorting
             if (repolistViewModel.SelectedLanguage != null) language = repolistViewModel.SelectedLanguage;
+
+            
             if (topic != null)
             {
+                //Filter the repos by topic
                 repos = _repoInterface.ReposPerTopic(topic).ToList();
 
+                //and set the SelectedTopic to be the topic
                 repolistViewModel.SelectedTopic = topic;
             }
             else if(language != null)
             {
+                //Filter the repos by topic
                 repos = _repoInterface.ReposPerLanguage(language).ToList();
 
+                //and set the SelectedTopic to be the topic
                 repolistViewModel.SelectedLanguage = language;
 
                 
             }
             else
             {
-                repos = _repoInterface.GetAllRepos().Result.ToList();
+                //Return all the repos if non of the filtering paramenters is there
+                repos = await _repoInterface.GetAllRepos();
             }
-            
+           
             if (repolistViewModel.SortOrderFork == "fork_desc" && repolistViewModel.SortParam == "forks")
             {
                 repolistViewModel.Repos = repos.OrderByDescending(x => x.forksCount);
@@ -110,8 +121,8 @@ namespace GithubRepoTracker.Controllers
             repolistViewModel.Repos = repolistViewModel.Repos.Skip((pager.CurrentPage - 1) * pager.PageSize).Take(pager.PageSize);
             repolistViewModel.Pager = pager;
 
-            repolistViewModel.Topics =_topicInterface.GetAllTopics().Result;
-            repolistViewModel.Languages = _languageInterface.GetAllLanguages().Result;
+            repolistViewModel.Topics = await _topicInterface.GetAllTopics();
+            repolistViewModel.Languages = await _languageInterface.GetAllLanguages();
 
 
             return View(repolistViewModel);

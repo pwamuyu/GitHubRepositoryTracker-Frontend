@@ -18,6 +18,10 @@ namespace GithubRepoTracker.Services
             BaseUrl = _configuration.GetValue<string>("ApiBaseUrl");
         }
 
+        /// <summary>
+        /// Gets the user credentials from the Configuration file pass them as paramaters to the HTTP post request.
+        /// </summary>
+        /// <returns>Returns the access token as a string</returns>
         public async Task<string> GetAccessTokenAsync()
         {
             string token = "";

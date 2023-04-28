@@ -22,8 +22,12 @@ namespace GithubRepoTracker.Services
             BaseUrl = _configuration.GetValue<string>("ApiBaseUrl");
 
         }
+        /// <summary>
+        /// Makes a get request to the api to get the languages
+        /// </summary>
+        /// <returns>A list of languages</returns>
 
-        public async Task<IEnumerable<Language>> GetAllLanguages()
+        public async Task<List<Language>> GetAllLanguages()
         {
             var Token = await _apiAuthInterface.GetAccessTokenAsync();
             var language = new List<Language>();

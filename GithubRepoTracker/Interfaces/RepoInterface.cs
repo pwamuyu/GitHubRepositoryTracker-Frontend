@@ -6,7 +6,7 @@ namespace GithubRepoTracker.Interfaces
     {
 
 
-        Task<IEnumerable<Repo>> GetAllRepos();
+        Task<List<Repo>> GetAllRepos();
         IEnumerable<Repo> ReposPerTopic(string topic);
         IEnumerable<Repo> ReposPerLanguage(string language);
        

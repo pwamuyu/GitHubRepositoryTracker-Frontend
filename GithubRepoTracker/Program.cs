@@ -1,6 +1,7 @@
 using GithubRepoTracker.Interfaces;
 using GithubRepoTracker.Services;
 using GithubRepoTracker.ViewModels;
+using GithubRepoTracker.Models;
 using Microsoft.Extensions.Caching.Memory;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,10 +14,13 @@ builder.Services.AddScoped<LanguageInterface, LanguageService>();
 builder.Services.AddScoped<ApiAuthInterface, ApiAuthService>();
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<RepoListViewModel, RepoListViewModel>();
-// Configure caching and Identity.
-builder.Services.AddScoped<IMemoryCache, MemoryCache>();
+// Configure caching
 
-builder.Services.AddDistributedMemoryCache();
+builder.Services.AddMemoryCache();
+builder.Services.Configure<MemoryCacheOptions>(options =>
+{
+    options.ExpirationScanFrequency = TimeSpan.FromMinutes(30);
+});
 
 builder.Services.AddSession(options =>
 {

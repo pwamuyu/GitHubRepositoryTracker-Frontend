@@ -1,5 +1,6 @@
 ﻿using GithubRepoTracker.Interfaces;
 using GithubRepoTracker.Models;
+using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Web;
@@ -12,20 +13,31 @@ namespace GithubRepoTracker.Services
         private readonly IConfiguration _configuration;
         private readonly string BaseUrl;
         private readonly ApiAuthInterface _apiAuthInterface;
+        private IMemoryCache _memoryCache;
 
-        public TopicService(HttpClient client, IConfiguration configuration, ApiAuthInterface apiAuthInterface)
+        public TopicService(HttpClient client, IConfiguration configuration, ApiAuthInterface apiAuthInterface, IMemoryCache memoryCache)
         {
             _client = client ?? throw new ArgumentNullException(nameof(client));
             _configuration = configuration;
             _apiAuthInterface = apiAuthInterface;
+            _memoryCache = memoryCache;
 
             BaseUrl = _configuration.GetValue<string>("ApiBaseUrl");
             
         }
-        
 
-        public async Task<IEnumerable<Topic>> GetAllTopics()
+        /// <summary>
+        /// First checks of there are topics in the cache before making a call to the API
+        /// </summary>
+        /// <returns>A list of topics</returns>
+        public async Task<List<Topic>> GetAllTopics()
         {
+
+            var cacheKey = "allTopics";
+            if (_memoryCache.TryGetValue(cacheKey, out var cachedTopics))
+            {
+                return cachedTopics as List<Topic>;
+            }
             var Token = await _apiAuthInterface.GetAccessTokenAsync();
             var topics = new List<Topic>();
 
@@ -78,6 +90,8 @@ namespace GithubRepoTracker.Services
                     break;
                 }
             }
+
+            _memoryCache.Set(cacheKey, topics);
 
             return topics;
         }

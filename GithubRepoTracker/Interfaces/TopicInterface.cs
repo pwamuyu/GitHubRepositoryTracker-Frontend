@@ -4,6 +4,6 @@ namespace GithubRepoTracker.Interfaces
 {
     public interface TopicInterface
     {
-        Task<IEnumerable<Topic>> GetAllTopics();
+        Task<List<Topic>> GetAllTopics();
     }
 }
