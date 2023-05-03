@@ -12,7 +12,7 @@ namespace GithubRepoTracker.Controllers
         
         private readonly TopicInterface _topicInterface;
         private readonly RepoInterface _repoInterface;
-        private LanguageInterface _languageInterface;
+        private readonly LanguageInterface _languageInterface;
         
        
         public HomeController( RepoInterface repoInterface, TopicInterface topicInterface,LanguageInterface languageInterface)
@@ -26,7 +26,7 @@ namespace GithubRepoTracker.Controllers
 
         // Get: repos action 
        
-        public async Task<IActionResult> Index(RepoListViewModel repolistViewModel,string? topic,string language,int? page)
+        public async Task<IActionResult> Index(RepoListViewModel repolistViewModel,string? topic,string? language,int? page)
         {
             List<Repo> repos = new List<Repo>();
 

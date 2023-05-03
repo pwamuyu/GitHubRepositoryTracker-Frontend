@@ -24,29 +24,28 @@ namespace GithubRepoTrackerTest.Controllers
         }
 
         [Fact]
-        public void Index_ReturnsViewResultWithRipoListViewModel()
+        public async void Index_ReturnsViewResultWithRepoListViewModel()
         {
             // Arrange
             var viewModel = new RepoListViewModel();
 
             // Act
-            var result = _controller.Index(viewModel, null, null, null);
+            var result = await _controller.Index(viewModel, null, null, null) as ViewResult;
 
             // Assert
             Assert.IsType<ViewResult>(result);
-            var viewResult = result as ViewResult;
-            Assert.IsAssignableFrom<RepoListViewModel>(viewResult.ViewData.Model);
+            Assert.IsAssignableFrom<RepoListViewModel>(result.ViewData.Model);
         }
 
 
         [Fact]
-        public void Index_ReturnsViewResultWithViewModelWithRepos()
+        public async void Index_ReturnsViewResultWithViewModelWithRepos()
         {
             var viewModel = new RepoListViewModel();
             _mockRepoInterface.Setup(repo => repo.GetAllRepos().Result).Returns(MockData.GetTestRepoItems);
 
             // Act
-            var result = _controller.Index(viewModel, null, null, null) as ViewResult;
+            var result = await _controller.Index(viewModel, null, null, null) as ViewResult;
 
             // Assert
             Assert.IsAssignableFrom<RepoListViewModel>(result.ViewData.Model);
@@ -55,13 +54,13 @@ namespace GithubRepoTrackerTest.Controllers
         }
 
         [Fact]
-        public void Index_ReturnsViewResultWithViewModelWithTopics()
+        public async void Index_ReturnsViewResultWithViewModelWithTopics()
         {
             var viewModel = new RepoListViewModel();
             _mockTopicInterface.Setup(topic => topic.GetAllTopics().Result).Returns(MockData.GetTestTopicItems);
 
             // Act
-            var result = _controller.Index(viewModel, null, null, null) as ViewResult;
+            var result = await _controller.Index(viewModel, null, null, null) as ViewResult;
 
             // Assert
             Assert.IsAssignableFrom<RepoListViewModel>(result.ViewData.Model);
@@ -70,13 +69,13 @@ namespace GithubRepoTrackerTest.Controllers
         }
 
         [Fact]
-        public void Index_ReturnsViewResultWithViewModelWithLanguages()
+        public async void Index_ReturnsViewResultWithViewModelWithLanguages()
         {
             var viewModel = new RepoListViewModel();
             _mockLanguageInterface.Setup(language => language.GetAllLanguages().Result).Returns(MockData.GetTestLanguageItems);
 
             // Act
-            var result = _controller.Index(viewModel, null, null, null) as ViewResult;
+            var result = await _controller.Index(viewModel, null, null, null) as ViewResult;
 
             // Assert
             Assert.IsAssignableFrom<RepoListViewModel>(result.ViewData.Model);

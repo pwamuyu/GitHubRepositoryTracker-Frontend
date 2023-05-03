@@ -6,7 +6,7 @@ namespace GithubRepoTracker.Data
     public class MockData
     {
 
-        public static IEnumerable<Topic> GetTestTopicItems()
+        public static List<Topic> GetTestTopicItems()
         {
             
 
@@ -22,7 +22,7 @@ namespace GithubRepoTracker.Data
             return topics;
         }
 
-        public static IEnumerable<Repo> GetTestRepoItems()
+        public static List<Repo> GetTestRepoItems()
         {
 
         var repositories = new List<Repo>
@@ -80,7 +80,7 @@ namespace GithubRepoTracker.Data
             return repositories;
         }
 
-        public static IEnumerable<Language> GetTestLanguageItems()
+        public static List<Language> GetTestLanguageItems()
         {
 
 

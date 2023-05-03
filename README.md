@@ -1,6 +1,6 @@
 # Introduction
 
-This project is a web application retrieves data from an API.
+This project is a web application retrieves data from this [API](https://github.com/FacultyUpskillingOrg/GitHubRepository-Backend).
 
 Users can view repositories sorted by updatedAt date, number of stars, or number
 of forks. Additionally, users can filter repositories by topic or language and
@@ -10,7 +10,7 @@ It is developed using ASP.NET Core MVC.
 
 # Installation process
 
-1. Clone the repository using git clone [repository-url](https://MicrosoftLeapClassroom@dev.azure.com/MicrosoftLeapClassroom/GitRepositoryTracker/_git/GitHubRepositoryTracker-FrontEnd)
+1. Clone the repository using git clone [repository-url](https://github.com/FacultyUpskillingOrg/GitHubRepositoryTracker-Frontend.git)
 2. Navigate to the project folder and open the solution file in Visual Studio.
 
 # Software dependencies
@@ -22,7 +22,7 @@ Visual Studio 2022
 
 appsetting.config
 ```
-"ApiBaseUrl": "your base url",
+"ApiBaseUrl": "your api base url",
   "ApiEndpoints": {
     "GetAllReposEndpoint": "The endpoint that returns all the repositories",
     "GetAllTopicsEndpoint": "The endpoint that returns all the topics",
