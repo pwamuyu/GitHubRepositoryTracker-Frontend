@@ -14,9 +14,11 @@ namespace GithubRepoTracker.Services
         private readonly ApiAuthInterface _apiAuthInterface;
         private readonly string BaseUrl;
         private IMemoryCache _memoryCache;
+        private readonly ILogger<RepoService> _logger;
 
-        public RepoService(HttpClient client, IConfiguration configuration, ApiAuthInterface apiAuthInterface, IMemoryCache memoryCache)
+        public RepoService(ILogger<RepoService> logger, HttpClient client, IConfiguration configuration, ApiAuthInterface apiAuthInterface, IMemoryCache memoryCache)
         {
+            _logger = logger;
             _client = client ?? throw new ArgumentNullException(nameof(client));
             _configuration = configuration;
             _apiAuthInterface = apiAuthInterface;
@@ -76,6 +78,7 @@ namespace GithubRepoTracker.Services
                     if (!response.IsSuccessStatusCode)
                     {
                         // handle error response
+                        _logger.LogError($"RepoService: {response.ReasonPhrase}");
                         break;
                     }
 
@@ -96,7 +99,7 @@ namespace GithubRepoTracker.Services
                 catch (Exception ex)
                 {
                     // handle exception
-                    Console.WriteLine(ex.ToString());
+                    _logger.LogError($"RepoService: {ex.Message}");
                     break;
                 }
 

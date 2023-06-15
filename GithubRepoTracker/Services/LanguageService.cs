@@ -12,9 +12,11 @@ namespace GithubRepoTracker.Services
         private readonly IConfiguration _configuration;
         private readonly ApiAuthInterface _apiAuthInterface;
         private readonly string BaseUrl;
+        private readonly ILogger<LanguageService> _logger;
 
-        public LanguageService(HttpClient client, IConfiguration configuration, ApiAuthInterface apiAuthInterface)
+        public LanguageService(ILogger<LanguageService> logger, HttpClient client, IConfiguration configuration, ApiAuthInterface apiAuthInterface)
         {
+            _logger = logger;
             _client = client ?? throw new ArgumentNullException(nameof(client));
             _configuration = configuration;
            _apiAuthInterface = apiAuthInterface;
@@ -58,6 +60,7 @@ namespace GithubRepoTracker.Services
                     if (!response.IsSuccessStatusCode)
                     {
                         // handle error response
+                        _logger.LogError($"LanguageService: {response.ReasonPhrase}");
                         break;
                     }
 
@@ -78,7 +81,7 @@ namespace GithubRepoTracker.Services
                 catch (Exception ex)
                 {
                     // handle exception
-                    Console.WriteLine(ex);
+                    _logger.LogError($"LanguageService: {ex.Message}");
                     break;
                 }
 

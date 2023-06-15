@@ -14,16 +14,18 @@ namespace GithubRepoTracker.Services
         private readonly string BaseUrl;
         private readonly ApiAuthInterface _apiAuthInterface;
         private IMemoryCache _memoryCache;
+        private readonly ILogger<TopicService> _logger;
 
-        public TopicService(HttpClient client, IConfiguration configuration, ApiAuthInterface apiAuthInterface, IMemoryCache memoryCache)
+        public TopicService(ILogger<TopicService> logger, HttpClient client, IConfiguration configuration,
+            ApiAuthInterface apiAuthInterface, IMemoryCache memoryCache)
         {
+            _logger = logger;
             _client = client ?? throw new ArgumentNullException(nameof(client));
             _configuration = configuration;
             _apiAuthInterface = apiAuthInterface;
             _memoryCache = memoryCache;
 
             BaseUrl = _configuration.GetValue<string>("ApiBaseUrl");
-            
         }
 
         /// <summary>
@@ -32,7 +34,6 @@ namespace GithubRepoTracker.Services
         /// <returns>A list of topics</returns>
         public async Task<List<Topic>> GetAllTopics()
         {
-
             var cacheKey = "allTopics";
             if (_memoryCache.TryGetValue(cacheKey, out var cachedTopics))
             {
@@ -65,7 +66,7 @@ namespace GithubRepoTracker.Services
 
                     if (!response.IsSuccessStatusCode)
                     {
-                        // handle error response
+                        _logger.LogError($"TopicService: {response.ReasonPhrase}");
                         break;
                     }
 
@@ -85,8 +86,7 @@ namespace GithubRepoTracker.Services
                 }
                 catch (Exception ex)
                 {
-                    // handle exception
-                    Console.WriteLine(ex.Message);
+                    _logger.LogError($"TopicService: {ex.Message}");
                     break;
                 }
             }
@@ -95,7 +95,5 @@ namespace GithubRepoTracker.Services
 
             return topics;
         }
-
-
     }
 }

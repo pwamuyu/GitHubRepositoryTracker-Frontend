@@ -10,8 +10,11 @@ namespace GithubRepoTracker.Services
         private readonly HttpClient _client;
         private readonly IConfiguration _configuration;
         private readonly string BaseUrl;
-        public ApiAuthService(HttpClient client, IConfiguration configuration)
+        private readonly ILogger<ApiAuthService> _logger;
+
+        public ApiAuthService(ILogger<ApiAuthService> logger, HttpClient client, IConfiguration configuration)
         {
+            _logger = logger;
             _client = client ?? throw new ArgumentNullException(nameof(client));
             _configuration = configuration;
 
@@ -29,7 +32,7 @@ namespace GithubRepoTracker.Services
             var user = new User()
             {
                 userName = _configuration.GetValue<string>("AuthCredentians:UserName"),
-            
+
                 password = _configuration.GetValue<string>("AuthCredentians:apiPassword")
             };
 
@@ -45,14 +48,15 @@ namespace GithubRepoTracker.Services
 
             if (res.IsSuccessStatusCode)
             {
-
-
                 var result = await res.Content.ReadAsStringAsync();
                 var deserializedRes = JsonConvert.DeserializeObject<AccessToken>(result);
                 token = deserializedRes.Token;
-
-
             }
+            else
+            {
+                _logger.LogError($"ApiAuthService: {res.ReasonPhrase}");
+            }
+
             return token;
         }
     }
